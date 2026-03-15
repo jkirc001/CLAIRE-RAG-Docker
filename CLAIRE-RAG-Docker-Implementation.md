@@ -15,7 +15,16 @@ The system retrieves relevant text chunks from a pre-built ChromaDB vectorstore,
 
 ## 2. Development Environment
 
-- **Host OS:** macOS Darwin 24.6.0 (Apple Silicon, MBP16)
+### Hardware
+
+- **Machine:** MacBook Pro 16-inch, 2019 ([specs](https://support.apple.com/en-us/111932))
+- **CPU:** 2.3 GHz 8-Core Intel Core i9
+- **Graphics:** AMD Radeon Pro 5500M 4 GB, Intel UHD Graphics 630 1536 MB
+- **Memory:** 32 GB 2667 MHz DDR4
+- **OS:** macOS Sequoia 15.7.4 (Darwin 24.6.0)
+
+### Software
+
 - **Docker:** Docker Desktop for Mac with Docker Compose v2
 - **Python (host):** 3.14.3 (used only for the `./ask` wrapper script's JSON formatting)
 - **Python (container):** 3.11-slim (Debian Trixie base)
