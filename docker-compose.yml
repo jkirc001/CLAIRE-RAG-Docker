@@ -1,6 +1,5 @@
 services:
   app:
-    build: .
     image: ghcr.io/jkirc001/claire-rag-app:latest
     container_name: claire-rag-app
     env_file: .env
