@@ -15,4 +15,4 @@ if [ ! -f ./vectorstore/chroma.sqlite3 ]; then
     exit 1
 fi
 
-docker compose run app "$@"
+docker compose run --rm app "$@"
