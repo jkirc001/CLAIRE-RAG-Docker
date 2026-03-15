@@ -19,5 +19,5 @@ RUN pip install --no-cache-dir .
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
 RUN python -c "from sentence_transformers import CrossEncoder; CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')"
 
-ENTRYPOINT ["python", "-m", "claire_rag.ask"]
-CMD ["--help"]
+EXPOSE 8000
+CMD ["uvicorn", "claire_rag.server:app", "--host", "0.0.0.0", "--port", "8000"]

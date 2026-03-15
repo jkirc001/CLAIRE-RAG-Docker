@@ -15,4 +15,74 @@ if [ ! -f ./vectorstore/chroma.sqlite3 ]; then
     exit 1
 fi
 
-docker compose run --rm app "$@"
+SERVER_URL="http://localhost:8000"
+
+# Start server if not running
+if ! curl -s "$SERVER_URL/health" > /dev/null 2>&1; then
+    echo "Starting server (loading models)..."
+    docker compose up -d
+    # Wait for healthy
+    while ! curl -s "$SERVER_URL/health" > /dev/null 2>&1; do
+        sleep 1
+    done
+    echo "Server ready."
+fi
+
+# Build JSON payload
+QUESTION="$1"
+shift
+
+# Parse optional flags
+K=10
+DATASET=""
+USE_RANKER=true
+SHOW_CHUNKS=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --k) K="$2"; shift 2 ;;
+        --dataset) DATASET="$2"; shift 2 ;;
+        --no-ranker) USE_RANKER=false; shift ;;
+        --show-chunks) SHOW_CHUNKS=true; shift ;;
+        *) shift ;;
+    esac
+done
+
+JSON="{\"question\":$(printf '%s' "$QUESTION" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))'),\"k\":$K,\"use_ranker\":$USE_RANKER,\"show_chunks\":$SHOW_CHUNKS"
+if [ -n "$DATASET" ]; then
+    JSON="$JSON,\"dataset\":\"$DATASET\""
+fi
+JSON="$JSON}"
+
+RESPONSE=$(curl -s -X POST "$SERVER_URL/ask" -H "Content-Type: application/json" -d "$JSON")
+
+# Check for error
+if echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if 'answer' in d else 1)" 2>/dev/null; then
+    echo ""
+    echo "================================================================================"
+    echo "ANSWER"
+    echo "================================================================================"
+    echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['answer'])"
+    echo "================================================================================"
+
+    if [ "$SHOW_CHUNKS" = "true" ]; then
+        echo ""
+        echo "$RESPONSE" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+chunks = data.get('chunks', [])
+print(f'RETRIEVED CHUNKS ({len(chunks)} chunks)')
+print('=' * 80)
+for i, c in enumerate(chunks, 1):
+    print(f\"[{i}] {c['dataset']} {c['source_id']}\")
+    print(f\"Document: {c['document_id']}\")
+    print(f\"Text: {c['text'][:200]}...\")
+    if c.get('distance'):
+        print(f\"Distance: {c['distance']:.4f}\")
+    print()
+"
+    fi
+else
+    echo "Error: $RESPONSE"
+    exit 1
+fi

@@ -18,9 +18,11 @@ cp .env.example .env
 ./ask "What is CWE-79?"
 ```
 
+The first `./ask` starts the server container (models load once, ~10s). Subsequent queries are fast (~2s local pipeline + OpenAI API latency).
+
 ## How It Works
 
-The RAG pipeline runs inside a single Docker container:
+The RAG pipeline runs as a persistent server inside a single Docker container. Models load once on startup and stay in memory between queries.
 
 1. **Retriever** -- embeds your query with `all-MiniLM-L6-v2`, searches ChromaDB for top-50 candidates
 2. **Ranker** -- re-ranks candidates with cross-encoder `ms-marco-MiniLM-L-6-v2`, returns top-10
@@ -36,9 +38,17 @@ The ChromaDB vectorstore is pre-built with all six datasets and mounted from the
 ./ask "question" --dataset CWE    # Filter by dataset
 ./ask "question" --show-chunks    # Show retrieved chunks
 ./ask "question" --no-ranker      # Disable cross-encoder re-ranking
-./ask "question" --debug          # Show full pipeline debug info
-./ask "question" --stub           # Test without API calls
 ```
+
+## Managing the Server
+
+```bash
+docker compose up -d              # Start the server manually
+docker compose down               # Stop the server
+docker compose logs               # View server logs
+```
+
+The `./ask` script auto-starts the server if it's not running. To stop it when done, use `docker compose down`.
 
 ## Building Locally
 

@@ -3,5 +3,13 @@ services:
     image: ghcr.io/jkirc001/claire-rag-app:latest
     container_name: claire-rag-app
     env_file: .env
+    ports:
+      - "8000:8000"
     volumes:
       - ./vectorstore:/app/vectorstore
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
