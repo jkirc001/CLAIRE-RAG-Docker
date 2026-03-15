@@ -1,0 +1,20 @@
+# Project-wide settings for CLAIRE-RAG
+
+mode: "development"  # development | evaluation
+
+llm:
+  provider: "openai"
+  model: "gpt-4o-mini"  # default for development (overridden to gpt-4o in evaluation mode)
+  temperature: 0.2
+  max_tokens: 2048
+
+ranker:
+  enabled: true  # Cross-encoder re-ranking enabled by default (classic 3-component RAG)
+  model: "cross-encoder/ms-marco-MiniLM-L-6-v2"  # Cross-encoder model for re-ranking
+  retrieve_k: 50  # Number of chunks to retrieve before ranking
+  rank_k: 10  # Number of chunks to return after ranking
+
+paths:
+  data_dir: "data/"
+  index_dir: "indexes/"
+

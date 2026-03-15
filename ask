@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | grep -v '^\s*$' | xargs)
+fi
+
+if [ -z "$OPENAI_API_KEY" ]; then
+    echo "Error: OPENAI_API_KEY is not set. Add it to .env or export it."
+    exit 1
+fi
+
+if [ ! -f ./vectorstore/chroma.sqlite3 ]; then
+    echo "Error: Vectorstore not found. Run ./scripts/fetch-vectorstore.sh first."
+    exit 1
+fi
+
+docker compose run --rm app "$@"

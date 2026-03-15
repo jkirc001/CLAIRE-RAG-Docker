@@ -1,0 +1,48 @@
+[project]
+name = "claire-rag"
+version = "0.1.0"
+description = "Classic RAG baseline for cybersecurity knowledge bases"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+dependencies = [
+    "sentence-transformers>=2.2.0,<3.0.0",
+    "torch>=2.0.0,<2.2.0",
+    "transformers>=4.30.0,<4.40.0",  # Pin transformers for torch 2.1.2 compatibility
+    "numpy<2.0.0",  # Pin NumPy 1.x for torch compatibility
+    "chromadb>=0.4.0",
+    "openai>=1.0.0",
+    "tiktoken>=0.5.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "typer>=0.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["claire_rag"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
+
