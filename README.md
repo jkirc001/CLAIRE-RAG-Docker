@@ -2,13 +2,7 @@
 
 Containerized distribution of CLAIRE-RAG -- a retrieval-augmented generation pipeline for cybersecurity knowledge bases (CVE, CWE, CAPEC, ATT&CK, NICE, DCWF).
 
-> **Performance Note:** In comparative testing (n=20 queries), this standard RAG approach achieved a 0% automated pass rate and 5% human-validated pass rate on cross-framework cybersecurity questions. The knowledge graph approach ([CLAIRE-KG-Docker](https://github.com/jkirc001/CLAIRE-KG-Docker)) achieved 100% automated and 95% human-validated pass rates on the same queries. Standard RAG cannot stay grounded in retrieved data for questions requiring structural awareness across frameworks like MITRE ATT&CK, NICE, and CWE. This repository exists as a baseline for comparison -- for production use on cross-framework queries, use CLAIRE-KG-Docker instead.
->
-> | Approach | Automated Pass Rate | Human-Validated Pass Rate |
-> |----------|-------------------|--------------------------|
-> | CLAIRE-KG | 20/20 (100%) | 19/20 (95%) |
-> | DirectLLM | 2/20 (10%) | 3/20 (15%) |
-> | **RAG (this repo)** | **0/20 (0%)** | **1/20 (5%)** |
+> **Note:** This is the RAG baseline for the CLAIRE project. It exists for comparative evaluation against [CLAIRE-KG-Docker](https://github.com/jkirc001/CLAIRE-KG-Docker) (knowledge graph approach), which significantly outperforms standard RAG on cross-framework cybersecurity queries. For production use, use CLAIRE-KG-Docker.
 
 ## Prerequisites
 
